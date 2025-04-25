@@ -1,0 +1,43 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # Backend configuration can go here if you're using remote state
+  terraformVersion: '1.6.0'
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+
+  - task: TerraformInstaller@1
+    inputs:
+      terraformVersion: '$(terraformVersion)'
+
+  - script: |
+      terraform --version
+    displayName: 'Check Terraform Version'
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'terraform-demo'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        # Login and init Terraform
+        terraform init
+
+        # Validate your Terraform files
+        terraform validate
+
+        # Optional: Preview the changes
+        terraform plan -out=tfplan
+
+        # Apply the changes
+        terraform apply -auto-approve tfplan
+
+      workingDirectory: $(System.DefaultWorkingDirectory)
