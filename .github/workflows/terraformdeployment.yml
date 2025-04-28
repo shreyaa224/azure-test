@@ -12,12 +12,6 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
 
-    # env:
-    #   ARM_SUBSCRIPTION_ID: d39add2e-a062-4ac2-b217-b69b4fb14a19
-    #   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-    #   ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-    #   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -25,12 +19,12 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
       with:
-        terraform_version: 1.8.0  # or whatever version you want
+        terraform_version: 1.8.0
 
     - name: Azure Login
       uses: azure/login@v1
       with:
-        creds:${{ secrets.AZURE_CREDENTIALS}}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Terraform Init
       run: terraform init
