@@ -28,15 +28,6 @@ jobs:
 
     - name: Terraform Init
       run: terraform init
-
-    - name: Terraform Plan with Colored Output
-      run: |
-        terraform plan -no-color | awk '
-          /^\s*\+/ {print "\033[0;32m" $0 "\033[0m"; next}  # Green for create
-          /^\s*-/  {print "\033[0;31m" $0 "\033[0m"; next}  # Red for delete
-          /^\s*~/  {print "\033[0;33m" $0 "\033[0m"; next}  # Yellow for update
-          {print}
-        '
         
     - name: Terraform Plan
       run: terraform plan
