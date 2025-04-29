@@ -6,7 +6,7 @@ provider "azurerm" {
 resource "azurerm_resource_group" "example" {
   for_each = toset(["rg220401", "rg220404", "rg220403"])
   name     = "resourceGroup-${each.value}"
-  location = "East US"
+  location = "west europe"
 }
 
 resource "azurerm_storage_account" "example" {
