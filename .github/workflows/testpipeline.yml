@@ -1,5 +1,5 @@
 steps:
-  - name: Checkout repositoryname: Terraform Colored Pipeline
+  - name: testpipeline
 
 on:
   push:
