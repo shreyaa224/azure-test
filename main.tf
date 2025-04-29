@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "example" {
 resource "azurerm_storage_account" "example" {
   for_each = {
     rg220401 = "eastus2"
-    rg220404 = "westus"
+    #rg220404 = "westus"
     # rg220403 = "centralus" # Deleted to trigger destruction
   }
 
