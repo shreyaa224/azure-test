@@ -6,18 +6,19 @@ provider "azurerm" {
 resource "azurerm_resource_group" "example" {
   for_each = toset(["rg220401", "rg220404", "rg220403"])
   name     = "resourceGroup-${each.value}"
-  location = "west europe"
+  location = "East US"
 }
 
 resource "azurerm_storage_account" "example" {
   for_each = {
     rg220401 = "eastus2"
     rg220404 = "westus"
-    # rg220403 = "centralus"  ← Removed for destruction test
+    # rg220403 = "centralus" # Deleted to trigger destruction
   }
+
   name                     = "storage${each.key}"
   resource_group_name      = azurerm_resource_group.example[each.key].name
   location                 = each.value
-  account_tier             = "Premium"
+  account_tier             = "Standard"
   account_replication_type = "GRS"
 }
