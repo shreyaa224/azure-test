@@ -17,7 +17,7 @@ resource "azurerm_storage_account" "example" {
   name                     = "storage${each.key}"
   resource_group_name      = azurerm_resource_group.example[each.key].name
   location                 = each.value
-  account_tier             = "Standard"
+  account_tier             = "General Purpose"
   account_replication_type = "GRS"
 }
 
