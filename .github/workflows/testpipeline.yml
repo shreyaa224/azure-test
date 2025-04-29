@@ -1,0 +1,79 @@
+steps:
+  - name: Checkout repositoryname: Terraform Colored Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.0
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    uses: actions/checkout@v4
+
+  - name: Setup Terraform
+    uses: hashicorp/setup-terraform@v3
+    with:
+      terraform_version: 1.8.0
+
+  - name: Azure Login
+    uses: azure/login@v1
+    with:
+      creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+  - name: Terraform Init (with color)
+    run: |
+      terraform init -no-color | awk '
+        /Initializing/     {print "\033[1;34m" $0 "\033[0m"; next}
+        /Successfully/     {print "\033[1;32m" $0 "\033[0m"; next}
+        /backend/          {print "\033[1;33m" $0 "\033[0m"; next}
+        {print}
+      '
+
+  - name: Terraform Plan (with color)
+    run: |
+      terraform plan -no-color -out=tfplan.out | awk '
+        /^\s*\+/ {print "\033[0;32m" $0 "\033[0m"; next}
+        /^\s*-/  {print "\033[0;31m" $0 "\033[0m"; next}
+        /^\s*~/  {print "\033[0;33m" $0 "\033[0m"; next}
+        {print}
+      '
+
+  - name: Terraform Show Plan (Before Apply, with color)
+    if: github.event_name == 'push'
+    run: |
+      terraform show -no-color tfplan.out | awk '
+        /^\s*\+/ {print "\033[0;32m" $0 "\033[0m"; next}
+        /^\s*-/  {print "\033[0;31m" $0 "\033[0m"; next}
+        /^\s*~/  {print "\033[0;33m" $0 "\033[0m"; next}
+        {print}
+      '
+
+  - name: Terraform Apply (with color)
+    if: github.event_name == 'push'
+    run: |
+      terraform apply -no-color -auto-approve tfplan.out | awk '
+        /Apply complete!/    {print "\033[1;32m" $0 "\033[0m"; next}
+        /Destroy complete!/  {print "\033[1;31m" $0 "\033[0m"; next}
+        /Resources:/         {print "\033[1;36m" $0 "\033[0m"; next}
+        /Error:/             {print "\033[1;31m" $0 "\033[0m"; next}
+        {print}
+      '
