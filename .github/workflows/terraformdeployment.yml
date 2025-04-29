@@ -1,4 +1,4 @@
-name: Terraform Deployment
+name: Terraform Deployment with Color
 
 on:
   push:
@@ -11,7 +11,6 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,22 +27,22 @@ jobs:
 
       - name: Terraform Init (with color)
         run: |
-          echo "\033[34mInitializing Terraform...\033[0m" # Blue color
+          echo -e "\e[34mInitializing Terraform...\e[0m" # Blue color
           terraform init
 
       - name: Terraform Plan (with color)
         run: |
-          echo "\033[33mGenerating Terraform Plan...\033[0m" # Yellow color
+          echo -e "\e[33mGenerating Terraform Plan...\e[0m" # Yellow color
           terraform plan
 
       - name: Terraform Apply (with color)
         if: github.event_name == 'push'
         run: |
-          echo "\033[32mApplying Terraform Configuration...\033[0m" # Green color
+          echo -e "\e[32mApplying Terraform Configuration...\e[0m" # Green color
           terraform apply -auto-approve
 
       - name: Terraform Destroy (if needed)
         if: github.event_name == 'pull_request' && github.event.pull_request.merged
         run: |
-          echo "\033[31mDestroying Terraform Resources (PR Merged)...\033[0m" # Red color
+          echo -e "\e[31mDestroying Terraform Resources (PR Merged)...\e[0m" # Red color
           terraform destroy -auto-approve
