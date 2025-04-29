@@ -1,5 +1,8 @@
 name: Terraform Deployment
 
+env:
+  TF_CLI_ARGS: "-input=false -no-color"
+
 on:
   push:
     branches:
